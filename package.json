@@ -1,0 +1,27 @@
+{
+  "name": "todo-api",
+  "version": "1.0.0",
+  "description": "TODO API",
+  "main": "API.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.3.3",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nedimazar/Todo-API.git"
+  },
+  "author": "nedimazar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nedimazar/Todo-API/issues"
+  },
+  "homepage": "https://github.com/nedimazar/Todo-API#readme"
+}
