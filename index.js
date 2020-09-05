@@ -1,32 +1,56 @@
 import Express from "express";
-import Sequelize from "sequelize";
+import pkg from "sequelize";
+const {
+  Sequelize,
+  DataTypes,
+  Model
+} = pkg;
 
-const sequelize = new Sequelize('postgres://localhost:5432/nedimazar');
+const sequelize = new Sequelize('postgres://localhost:5432/todoapi');
 
 const app = Express();
 
-
-
 const port = 3000;
 
-app.get("/", (req, res) => {
-    res.send("Hello World!");
+app.use(Express.json());
+
+app.get('/', (req, res) => res.json({
+  message: 'Hello World'
+}))
+
+app.listen(port, () => console.log(`Listening on: http://localhost:${port}`))
+
+
+sequelize.authenticate().then(() => {
+
+  console.log('Connection has been established successfully.');
+
+}).catch(err => {
+
+  console.error('Unable to connect to the database:', err);
+
 });
 
-app.listen(port, () => console.log("Listening on port " + port));
-// app.use(Express.json());
 
-// app.get('/', (req, res) => res.json({ message: 'Hello World' }))
+class todo extends Model {}
 
-// app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+todo.init({
+  // Model attributes are defined here
+  id: {
+    type: DataTypes.BIGINT,
+    primaryKey: true
+    // allowNull defaults to true
+  },
+  message: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+}, {
+  // Other model options go here
+  sequelize, // We need to pass the connection instance
+  modelName: 'todo' // We need to choose the model name
+});
 
-
-// sequelize.authenticate().then(() => {
-
-// console.log('Connection has been established successfully.');
-
-// }).catch(err => {
-
-// console.error('Unable to connect to the database:', err);
-
-// });
+todo.sync({
+  force: true
+});
