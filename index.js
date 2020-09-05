@@ -1,10 +1,9 @@
-import Express from "express";
-import pkg from "sequelize";
+Express = require("express");
 const {
   Sequelize,
   DataTypes,
   Model
-} = pkg;
+} = require("sequelize");
 
 const sequelize = new Sequelize('postgres://localhost:5432/todoapi');
 
@@ -15,7 +14,11 @@ const port = 3000;
 app.use(Express.json());
 
 app.get('/', (req, res) => res.json({
-  message: 'Hello World'
+  message: 'Hello, World!'
+}))
+
+app.get('/wow', (req, res) => res.json({
+  message: 'Wow, World!'
 }))
 
 app.listen(port, () => console.log(`Listening on: http://localhost:${port}`))
