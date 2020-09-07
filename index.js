@@ -5,23 +5,7 @@ const {
   Model
 } = require("sequelize");
 
-const sequelize = new Sequelize('postgres://localhost:5432/todoapi');
-
-const app = Express();
-
-const port = 3000;
-
-app.use(Express.json());
-
-app.get('/', (req, res) => res.json({
-  message: 'Hello, World!'
-}))
-
-app.get('/wow', (req, res) => res.json({
-  message: 'Wow, World!'
-}))
-
-app.listen(port, () => console.log(`Listening on: http://localhost:${port}`))
+const sequelize = new Sequelize('postgres://localhost:5433/todoapi');
 
 sequelize.authenticate().then(() => {
   console.log('Connection has been established successfully.');
@@ -29,10 +13,18 @@ sequelize.authenticate().then(() => {
   console.error('Unable to connect to the database:', err);
 });
 
+
+const app = Express();
+
+const port = 3000;
+
+app.use(Express.json());
+
+app.listen(port, () => console.log(`Listening on: http://localhost:${port}`))
+
 class todo extends Model {}
 
 todo.init({
-  // Model attributes are defined here
   id: {
     type: DataTypes.BIGINT,
     primaryKey: true,
@@ -49,5 +41,19 @@ todo.init({
 });
 
 todo.sync({
-  force: true
+  //force: true
 });
+
+app.get('/', (req, res) => res.json({
+  message: 'Hello, World!!'
+}));
+
+// This lets us query the database by the id of a TODO item.
+app.get("/api/todos/:todoId", (req, res) => {
+  let reqId = req.params.todoId;
+  todo.findOne({where: {id: reqId}}).then((todo) => {
+    res.json(todo);
+  });
+});
+
+
