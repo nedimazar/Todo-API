@@ -7,7 +7,7 @@ const {
 
 const bodyParser = require("body-parser");
 
-const sequelize = new Sequelize('postgres://localhost:5432/todoapi');
+const sequelize = new Sequelize('postgres://localhost:5433/todoapi');
 
 sequelize.authenticate().then(() => {
   console.log('Connection has been established successfully.');
@@ -21,7 +21,9 @@ const app = Express();
 const port = 3000;
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 
 app.use(Express.json());
@@ -32,11 +34,12 @@ class todo extends Model {}
 
 todo.init({
   // @NED - it's best to just allow sequelize to handle these fields automatically for you
-  // id: {
-  //   type: DataTypes.BIGINT,
-  //   primaryKey: true,
-  //   allowNull: false
-  // },
+  id: {
+    type: DataTypes.BIGINT,
+    primaryKey: true,
+    allowNull: false,
+    autoIncrement: true
+  },
   message: {
     type: DataTypes.STRING,
     allowNull: false
@@ -56,27 +59,31 @@ todo.sync({
   //force: true
 });
 
-app.get('/', (req, res) => res.json({
-  message: 'Hello, World!!'
-}));
 
 // This lets us query the database by the id of a TODO item.
 app.get("/api/todos/:todoId", (req, res) => {
   console.log(req)
   let reqId = req.params.todoId;
-  todo.findOne({where: {id: reqId}}).then((todo) => {
+  todo.findOne({
+    where: {
+      id: reqId
+    }
+  }).then((todo) => {
     res.json(todo);
   });
 });
 
+//This lets us get all the TODOS
+app.get('/api/todos', function (req, res) {
+  todo.findAll().then(todolist => res.json(todolist))
+});
+
 // This is broken, message and id are always null
 app.post('/api/todos', (req, res) => { // @NED - assuming you want it at this route
-  console.log("\n\n\n\n" + (req.body) + "\n\n\n\n")
+  console.log("\n\n\n\n" + (req.body.message) + "\n\n\n\n")
   const todoItem = {
     isComplete: false,
     message: req.body.message,
-    // id: req.body.id, @NED -  don't need to set the ID here, 
-    // sequelize will do it for you (unless you're trying to add the todolist ID?)
   };
 
   todo.create(todoItem)
@@ -90,4 +97,13 @@ app.post('/api/todos', (req, res) => { // @NED - assuming you want it at this ro
     })
 });
 
-
+//This lets us delete a TODO item by id
+app.delete('/api/todos/:id', (req, res, next) => {
+  todo.destroy({
+    where: {
+      id: req.params.id
+    }
+  }).then(() => res.json({
+    status: 'ok'
+  }))
+});
