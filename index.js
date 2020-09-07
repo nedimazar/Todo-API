@@ -107,3 +107,10 @@ app.delete('/api/todos/:id', (req, res, next) => {
     status: 'ok'
   }))
 });
+
+app.put('/api/todos/:id', (req, res) => {
+  console.log(req.body.isComplete);
+  todo.findByPk(req.params.id).then(item => item.update({
+    isComplete: req.body.isComplete
+  }).then(item => res.json(item)))
+});
