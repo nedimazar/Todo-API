@@ -33,7 +33,6 @@ app.listen(port, () => console.log(`Listening on: http://localhost:${port}`))
 class todo extends Model {}
 
 todo.init({
-  // @NED - it's best to just allow sequelize to handle these fields automatically for you
   id: {
     type: DataTypes.BIGINT,
     primaryKey: true,
@@ -78,7 +77,7 @@ app.get('/api/todos', function (req, res) {
   todo.findAll().then(todolist => res.json(todolist))
 });
 
-// This is broken, message and id are always null
+//This lets us add a new item to the TODO list
 app.post('/api/todos', (req, res) => { // @NED - assuming you want it at this route
   console.log("\n\n\n\n" + (req.body.message) + "\n\n\n\n")
   const todoItem = {
